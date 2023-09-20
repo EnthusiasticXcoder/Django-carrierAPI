@@ -160,7 +160,4 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-#API files
-client_secrets.json
-credentials.json
-settings.yaml
+carrierpiolet/__pycache__/
