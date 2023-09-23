@@ -10,23 +10,59 @@ BLOG_PATH_URL = 'https://leverageedu.com/blog/'
 
 class BlogListView(APIView):
     def post(self, request):
-        URL = request.data['url']
-        request = requests.get(URL)
-        soup = bs4.BeautifulSoup(request.content, 'html.parser')
-        return self.get_json_data(soup)
-    
+        try :    
+            URL = request.data['url']
+            request = requests.get(URL)
+            soup = bs4.BeautifulSoup(request.content, 'html.parser')
+            return self.get_json_data(soup)
+        except Exception as e :
+            return Response(data= str(e), status=status.HTTP_400_BAD_REQUEST) 
+        
     def get(self, request):
-        topic = request.data['topic'].replace(' ', '-')
-        request = requests.get(BLOG_PATH_URL + f'?s={topic}')
-        soup = bs4.BeautifulSoup(request.content, 'html.parser')
-        return self.get_json_data(soup)
+        try :
+            request = requests.get(BLOG_PATH_URL)
+            soup = bs4.BeautifulSoup(request.content, 'html.parser')
+            return self.get_home_json(soup)
+        except Exception as e :
+            return Response(data= str(e), status=status.HTTP_400_BAD_REQUEST) 
     
-    def get_json_data(self, soup : bs4.BeautifulSoup):
+    def get_home_json(self, soup : bs4.BeautifulSoup) :
         data = []
-        data.append(soup.find('h1', class_ = 'page-title').text)
+        alldiv = soup.find('main', id='main').find_all('div', class_ = 'article_category')
+
+        for div in alldiv :
+            sectiondata = {
+            'title' : div.find('h3').text,
+            'contant' : []
+            }
+            data.append(sectiondata)
+
+            for div in div.find_all('div', class_ ='articlesView') :
+                sectiondata['contant'].append(self.get_Home_details(div))
+
+        return Response(data = data , status= status.HTTP_200_OK)
+
+    def get_Home_details(self, divtag : bs4.Tag):
+        atag = divtag.find('a', class_ ='category-style')
+        aimgtag = divtag.find('a', class_ = 'more-link')
+        
+        return {
+            'img' : divtag.find('div', class_ = 'articleImg').find('img').get('src'),
+            'catagory' : atag.find('span', class_ = 'label').text,
+            'catagorylink' : atag.get('href'),
+            'title' : divtag.find('h4').text,
+            'link' : aimgtag.get('href'),
+            'text' : divtag.find_all('p')[-1].get_text(strip=True).split('\u2026')[0],    
+        }   
+        
+    def get_json_data(self, soup : bs4.BeautifulSoup):
+        data = {
+            'title' : soup.find('h1', class_ = 'page-title').text,
+            'contant' : []
+        }
 
         for article in soup.find('div', class_ = 'archive-wrap').find_all('article') :
-            data.append(self.get_details(article))
+            data['contant'].append(self.get_details(article))
         
         return Response(data = data , status= status.HTTP_200_OK)
 
@@ -40,7 +76,7 @@ class BlogListView(APIView):
             }
 
 class BlogContantView(APIView):
-    def get(self, request) :
+    def post(self, request) :
         URL = request.data['url']
         request = requests.get(URL)
         soup = bs4.BeautifulSoup(request.text, 'html.parser')
@@ -52,12 +88,15 @@ class BlogContantView(APIView):
                 "tag": heading.name,
                 "content": heading.text
             })
+        data.append({
+            "tag" : "img",
+            "content" : article.find('div', class_='post-media').find('img').get('src'),
+        })
         
         contant = article.find('div', class_ = 'show-content')
         data.extend(self.extract_div(contant))
         
         return Response(data = data , status= status.HTTP_200_OK)
-        # json_data = json.dump(data,f ,ensure_ascii=False, indent=4)
 
     def extract_table(self, soup : bs4.Tag) :
         ''' Function To Extract Table Data'''
@@ -82,10 +121,10 @@ class BlogContantView(APIView):
         ''' Function To Get List Data '''
         data = {
             'tag' : 'list',
-            'contant' : []
+            'content' : []
         }
         for i in list_tag.find_all('li') :
-            data['contant'].append(
+            data['content'].append(
                 {
                     'text' : i.text,
                     'link' : i.find('a').get('href') if i.find('a') else None
@@ -107,8 +146,15 @@ class BlogContantView(APIView):
                 case 'figure' :
                     if i.find('table') :
                         data.append(self.extract_table(i))
+                case 'a' :
+                    if i.text.strip() != '' :
+                        data.append({
+                            "tag": i.name,
+                            "content": i.text,
+                            "link" : i.get('href')
+                        })
                 case _ :
-                    if i.name in ['a', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] and i.text.strip() != '':
+                    if i.name in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] and i.text.strip() != '':
                         data.append({
                             "tag": i.name,
                             "content": i.text
@@ -130,9 +176,13 @@ class MenuListView(APIView):
         data.append(self.list_to_json(careers))
         data.append(self.list_to_json(exam))
         data.append(self.list_to_json(degree))
+        data.append({
+            'text' : 'Career Options After 12th',
+            'blog' : 'https://leverageedu.com/blog/career-options-after-12th/'
+        })
+
 
         return Response(data = data , status= status.HTTP_200_OK)
-        # json.dumps(data,indent= 2)
 
 
 
