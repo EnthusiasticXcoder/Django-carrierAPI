@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from rest_framework import response, status
+from rest_framework import status, response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import authenticate
@@ -9,18 +9,13 @@ from rest_framework.permissions import IsAuthenticated
 
 from .serializers import UserSerialiser
 
-
-class AuthView(APIView):
-    def post(self, request):
-        data = request.data
-        return self.__RegesterUser(data)
-    
-    def get(self, request):
+class LoginView(APIView) :
+    def post(self, request) :
         data : dict = request.data
         username = data.get('username')
         password = data.get('password')
         return self.__Login_User(username = username, password = password)
-    
+
     def __Login_User(self, username, password) :
         ''' Methord to cheack user credentials and login user with credentials'''
         try :
@@ -34,8 +29,13 @@ class AuthView(APIView):
             else :
                 return response.Response({'message' : 'user not found',}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e :    
-            return response.Response(data= str(e), status=status.HTTP_400_BAD_REQUEST)
-        
+            return response.Response(data= str(e), status=status.HTTP_400_BAD_REQUEST)    
+
+class RegesterView(APIView):
+    def post(self, request):
+        data = request.data
+        return self.__RegesterUser(data)
+    
     def __RegesterUser(self, data : dict) :
         ''' Method to regester a user in database with data'''
         try :
@@ -54,17 +54,25 @@ class AuthView(APIView):
         except Exception as e :
             return response.Response(data= str(e), status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
 class UserViewSet(APIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        try :
+            user = request.user
+            serializer = UserSerialiser(instance=user)
+            return response.Response(data=serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return response.Response(data= str(e), status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
         try :
-            data : dict = request.data
-            User.objects.filter(id = request.user.id).update(**data)
+            user : User = request.user
+            user.set_password(request.data['password'])
+            user.save()
+            # data : dict = request.data
+            # User.objects.filter(id = request.user.id).update(**data)
             return response.Response(data= {'message' : 'user data updated'},status=status.HTTP_200_OK)
         except Exception as e :
             return response.Response(data= str(e), status=status.HTTP_400_BAD_REQUEST)
@@ -72,7 +80,9 @@ class UserViewSet(APIView):
     def delete(self, request):
         try :
             user : User = request.user
+            print(user)
             user.delete()
+            user.save()
             return response.Response(data= {'message' : 'user deleted'},status=status.HTTP_200_OK)
         except Exception as e :
             return response.Response(data= str(e), status=status.HTTP_400_BAD_REQUEST)
