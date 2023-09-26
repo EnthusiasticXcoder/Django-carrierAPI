@@ -173,13 +173,20 @@ class MenuListView(APIView):
 
         data = []
 
-        data.append(self.list_to_json(careers))
-        data.append(self.list_to_json(exam))
-        data.append(self.list_to_json(degree))
+        data.append({
+            'text' : 'Career Options After 10th',
+            'blog' : 'https://leverageedu.com/blog/list-of-courses-after-10th-standard/'
+        })
+
         data.append({
             'text' : 'Career Options After 12th',
             'blog' : 'https://leverageedu.com/blog/career-options-after-12th/'
         })
+
+        data.append(self.list_to_json(careers))
+        data.append(self.list_to_json(exam))
+        data.append(self.list_to_json(degree))
+        
 
 
         return Response(data = data , status= status.HTTP_200_OK)
