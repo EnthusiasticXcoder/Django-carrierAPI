@@ -71,8 +71,6 @@ class UserViewSet(APIView):
             user : User = request.user
             user.set_password(request.data['password'])
             user.save()
-            # data : dict = request.data
-            # User.objects.filter(id = request.user.id).update(**data)
             return response.Response(data= {'message' : 'user data updated'},status=status.HTTP_200_OK)
         except Exception as e :
             return response.Response(data= str(e), status=status.HTTP_400_BAD_REQUEST)
@@ -80,7 +78,6 @@ class UserViewSet(APIView):
     def delete(self, request):
         try :
             user : User = request.user
-            print(user)
             user.delete()
             user.save()
             return response.Response(data= {'message' : 'user deleted'},status=status.HTTP_200_OK)
