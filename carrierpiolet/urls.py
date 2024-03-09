@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from Scrapper import AppConstants
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('user/', include('authenticate.urls')),
-    path('blog/', include('blog.urls'))
+    path(AppConstants.Path.ADMIN, admin.site.urls),
+    path(AppConstants.Path.USER, include('authenticate.urls')),
+    path(AppConstants.Path.BLOG, include('blog.urls'))
 ]

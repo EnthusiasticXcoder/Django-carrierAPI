@@ -1,8 +1,9 @@
 from django.urls import path
 from .views import UserViewSet, RegesterView, LoginView
+from Scrapper import AppConstants
 
 urlpatterns = [
-    path('', UserViewSet.as_view()),
-    path('register', RegesterView.as_view()),
-    path('login', LoginView.as_view()),
+    path(AppConstants.Path.BLANK, UserViewSet.as_view()),
+    path(AppConstants.Path.REGISTER, RegesterView.as_view()),
+    path(AppConstants.Path.LOGIN, LoginView.as_view()),
 ]
