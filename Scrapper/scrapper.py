@@ -5,37 +5,32 @@ from typing import Union
 from rest_framework import status
 from rest_framework.response import Response
 
+from Scrapper.AppConstants import AppConstants 
+
 class Scrapper :
     def __init__(self, URL : Union[str, None] = None):
-            
-        BLOG_PATH_URL = 'https://leverageedu.com/blog/'
-
-        HEADERS = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36",
-            "X-Amzn-Trace-Id": "Root=1-62d8036d-2b173c1f2e4e7a416cc9e554", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-            "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "en-GB"
-            }
-
-        URL = URL if URL is not None else BLOG_PATH_URL
+        ''' Initialise Scrapper class for scrapping Data from Website '''
+        URL = URL if URL is not None else AppConstants.BLOG_PATH_URL
         
-        request = requests.get(URL, headers=HEADERS)
-        self.soup = bs4.BeautifulSoup(request.content, 'html.parser')
+        request = requests.get(URL, headers=AppConstants.HEADERS)
+        self.soup = bs4.BeautifulSoup(request.content, AppConstants.PARSER)
     
     def get_menu_list_json(self) -> Response:
-        careers = self.soup.find('ul').find('li', id = 'menu-item-1917')
-        exam = self.soup.find('ul').find('li', id = 'menu-item-2812')
-        degree = self.soup.find('ul').find('li', id = 'menu-item-9601')
+        ''' Get List Of Menu Items For Side Drawer '''
+        careers = self.soup.find(AppConstants.Tags.ul).find(AppConstants.Tags.li, id = 'menu-item-1917')
+        exam = self.soup.find(AppConstants.Tags.ul).find(AppConstants.Tags.li, id = 'menu-item-2812')
+        degree = self.soup.find(AppConstants.Tags.ul).find(AppConstants.Tags.li, id = 'menu-item-9601')
 
         data = []
 
         data.append({
-            'text' : 'Career Options After 10th',
-            'blog' : 'https://leverageedu.com/blog/list-of-courses-after-10th-standard/'
+            AppConstants.TEXT : 'Career Options After 10th',
+            AppConstants.BLOG : 'https://leverageedu.com/blog/list-of-courses-after-10th-standard/'
         })
 
         data.append({
-            'text' : 'Career Options After 12th',
-            'blog' : 'https://leverageedu.com/blog/career-options-after-12th/'
+            AppConstants.TEXT : 'Career Options After 12th',
+            AppConstants.BLOG : 'https://leverageedu.com/blog/career-options-after-12th/'
         })
 
         data.append(self.list_to_json(careers))
@@ -45,156 +40,163 @@ class Scrapper :
         return Response(data = data , status= status.HTTP_200_OK)
 
     def get_content_json(self) -> Response:
+        ''' Get Content Of a Blog or Article form The Url '''
         data = []
-        article = self.soup.find('article')
+        article = self.soup.find(AppConstants.Tags.article)
 
-        heading = article.find('h1')
+        heading = article.find(AppConstants.Tags.h1)
         data.append({
-                "tag": heading.name,
-                "content": heading.text
+                AppConstants.TAG: heading.name,
+                AppConstants.CONTENT: heading.text
             })
         data.append({
-            "tag" : "img",
-            "content" : article.find('div', class_='post-media').find('img').get('src'),
+            AppConstants.TAG : AppConstants.Tags.img,
+            AppConstants.CONTENT : article.find(AppConstants.Tags.div, class_='post-media').find(AppConstants.Tags.div).get(AppConstants.src),
         })
         
-        contant = article.find('div', class_ = 'show-content')
-        data.extend(self.extract_div(contant))
+        content = article.find(AppConstants.Tags.div, class_ = 'show-content')
+        data.extend(self.extract_div(content))
         
         return Response(data = data , status= status.HTTP_200_OK)
 
     def get_home_json(self) -> Response:
+        ''' Get Data Of Home Page Of the Website '''
         data = []
-        alldiv = self.soup.find('main', id='main').find_all('div', class_ = 'article_category')
+        alldiv = self.soup.find(AppConstants.Tags.main, id='main').find_all(AppConstants.Tags.div, class_ = 'article_category')
 
         for div in alldiv :
             sectiondata = {
-            'title' : div.find('h3').text,
-            'contant' : []
+            AppConstants.TITLE : div.find(AppConstants.Tags.h3).text,
+            AppConstants.CONTENT: []
             }
             data.append(sectiondata)
 
-            for div in div.find_all('div', class_ ='articlesView') :
-                sectiondata['contant'].append(self.get_Home_details(div))
+            for div in div.find_all(AppConstants.Tags.div, class_ ='articlesView') :
+                sectiondata[AppConstants.CONTENT].append(self.get_Home_details(div))
 
         return Response(data = data , status= status.HTTP_200_OK)
 
     def get_json_data(self) -> Response:
+        ''' Get List of Blogs available for The Particular Career Option '''
         data = {
-            'title' : self.soup.find('h1', class_ = 'page-title').text,
-            'contant' : []
+            AppConstants.TITLE : self.soup.find(AppConstants.Tags.h1, class_ = 'page-title').text,
+            AppConstants.CONTENT : []
         }
 
-        for article in self.soup.find('div', class_ = 'archive-wrap').find_all('article') :
-            data['contant'].append(self.get_details(article))
+        for article in self.soup.find(AppConstants.Tags.div, class_ = 'archive-wrap').find_all(AppConstants.Tags.div) :
+            data[AppConstants.CONTENT].append(self.get_details(article))
         
         return Response(data = data , status= status.HTTP_200_OK)
 
-    def get_Home_details(self, divtag : bs4.Tag):
-        atag = divtag.find('a', class_ ='category-style')
-        aimgtag = divtag.find('a', class_ = 'more-link')
+    def get_Home_details(self, divtag : bs4.Tag) -> map:
+        ''' Get Details of each catagory article of Home Page Of Website '''
+        atag = divtag.find(AppConstants.Tags.a, class_ ='category-style')
+        aimgtag = divtag.find(AppConstants.Tags.a, class_ = 'more-link')
         
         return {
-            'img' : divtag.find('div', class_ = 'articleImg').find('img').get('src'),
-            'catagory' : atag.find('span', class_ = 'label').text,
-            'catagorylink' : atag.get('href'),
-            'title' : divtag.find('h4').text,
-            'link' : aimgtag.get('href'),
-            'text' : divtag.find_all('p')[-1].get_text(strip=True).split('\u2026')[0],    
+            AppConstants.IMAGE : divtag.find(AppConstants.Tags.div, class_ = 'articleImg').find(AppConstants.Tags.img).get(AppConstants.src),
+            AppConstants.CATAGORY : atag.find(AppConstants.Tags.span, class_ = 'label').text,
+            AppConstants.CATAGORY_LINK : atag.get(AppConstants.href),
+            AppConstants.TITLE : divtag.find(AppConstants.Tags.h4).text,
+            AppConstants.LINK : aimgtag.get(AppConstants.href),
+            AppConstants.TEXT : divtag.find_all(AppConstants.Tags.p)[-1].get_text(strip=True).split('\u2026')[0],    
         }       
 
-    def get_details(self, article : bs4.Tag):
+    def get_details(self, article : bs4.Tag) -> map:
+        ''' Get Details of each Blog of a Particular career Path '''
         return {
-            'img' : article.find('img').get('src'),
-            'catagory' : article.find('div', class_ = 'meta-category').find('span', class_ = 'label').text,
-            'title' : article.find('h2', class_ = 'entry-title').find('a').text,
-            'link' : article.find('h2', class_ = 'entry-title').find('a').get('href'),
-            'text' : article.find('div', class_ = 'entry-excerpt').get_text(strip=True).split('\u2026')[0],
+            AppConstants.IMAGE : article.find(AppConstants.Tags.img).get(AppConstants.src),
+            AppConstants.CATAGORY : article.find(AppConstants.Tags.div, class_ = 'meta-category').find(AppConstants.Tags.span, class_ = 'label').text,
+            AppConstants.TITLE : article.find(AppConstants.Tags.h2, class_ = 'entry-title').find(AppConstants.Tags.a).text,
+            AppConstants.LINK : article.find(AppConstants.Tags.h2, class_ = 'entry-title').find(AppConstants.Tags.a).get(AppConstants.href),
+            AppConstants.TEXT : article.find(AppConstants.Tags.div, class_ = 'entry-excerpt').get_text(strip=True).split('\u2026')[0],
             }
 
-    def extract_table(self, soup : bs4.Tag):
+    def extract_table(self, soup : bs4.Tag) -> map:
         ''' Function To Extract Table Data'''
         # Extract and append table data (table tags)
-        table = soup.find('table')
-        rows = table.find_all('tr')
+        table = soup.find(AppConstants.Tags.table)
+        rows = table.find_all(AppConstants.Tags.tr)
         table_data = []
         for row in rows:
-            cells = row.find_all(['th', 'td'])
+            cells = row.find_all([AppConstants.Tags.th, AppConstants.Tags.td])
             row_data = []
             for cell in cells:
                 row_data.append(cell.text)
             table_data.append(row_data)
 
         data = {
-            "tag": "table",
-            "content": table_data
+            AppConstants.TAG: AppConstants.Tags.table,
+            AppConstants.CONTENT: table_data
             }
         return data
     
-    def extract_list(self, list_tag : bs4.Tag):
+    def extract_list(self, list_tag : bs4.Tag) -> map:
         ''' Function To Get List Data '''
         data = {
-            'tag' : 'list',
-            'content' : []
+            AppConstants.TAG : AppConstants.Tags.list,
+            AppConstants.CONTENT : []
         }
-        for i in list_tag.find_all('li') :
-            data['content'].append(
+        for i in list_tag.find_all(AppConstants.Tags.li) :
+            data[AppConstants.CONTENT].append(
                 {
-                    'text' : i.text,
-                    'link' : i.find('a').get('href') if i.find('a') else None
+                    AppConstants.TEXT : i.text,
+                    AppConstants.LINK : i.find(AppConstants.Tags.a).get(AppConstants.href) if i.find(AppConstants.Tags.a) else None
                 }
             )
         return data
     
-    def extract_div(self, contant : bs4.Tag):
+    def extract_div(self, contant : bs4.Tag) -> list[map]:
         ''' Extract data from div '''
         data = []
         for i in contant.children :
             match i.name :
-                case 'div' :
+                case AppConstants.Tags.div :
                     data.extend(self.extract_div(i))
-                case 'ul' :
+                case AppConstants.Tags.ul :
                     data.append(self.extract_list(i))
-                case 'ol' :
+                case AppConstants.Tags.ol :
                     data.append(self.extract_list(i))
-                case 'figure' :
-                    if i.find('table') :
+                case AppConstants.Tags.figure :
+                    if i.find(AppConstants.Tags.table) :
                         data.append(self.extract_table(i))
-                case 'a' :
+                case AppConstants.Tags.a :
                     if i.text.strip() != '' :
                         data.append({
-                            "tag": i.name,
-                            "content": i.text,
-                            "link" : i.get('href')
+                            AppConstants.TAG: i.name,
+                            AppConstants.CONTENT: i.text,
+                            AppConstants.LINK: i.get(AppConstants.href)
                         })
                 case _ :
-                    if i.name in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] and i.text.strip() != '':
+                    if i.name in AppConstants.Tags.HEADERS_AND_PARAGRAPH and i.text.strip() != '':
                         data.append({
-                            "tag": i.name,
-                            "content": i.text
+                            AppConstants.TAG: i.name,
+                            AppConstants.CONTENT: i.text
                         })
         return data
     
-    def list_to_json(self, element : bs4.Tag):
+    def list_to_json(self, element : bs4.Tag) -> map:
+        ''' Function to convert HTML List to Json List '''
         data = {
-            "text": element.find('a').text,
-            "attlist": []
+            AppConstants.TEXT: element.find(AppConstants.Tags.a).text,
+            AppConstants.ATTRIBUTE_LIST: []
                 }
         # Find only the direct <li> children of the current <ul> element
-        list_elements = element.find('ul', recursive= False).find_all('li', recursive=False)
+        list_elements: list[bs4.Tag] = element.find(AppConstants.Tags.ul, recursive= False).find_all(AppConstants.Tags.li, recursive=False)
 
         for li_tag in list_elements:
             # Recursively process nested <ul> elements
-            nested_list = li_tag.find('ul')
+            nested_list = li_tag.find(AppConstants.Tags.ul)
             if nested_list:
-                data["attlist"].append(self.list_to_json(li_tag))
+                data[AppConstants.ATTRIBUTE_LIST].append(self.list_to_json(li_tag))
             else:
-                data["attlist"].append(self.list_data(li_tag))
+                data[AppConstants.ATTRIBUTE_LIST].append(self.list_data(li_tag))
         return data
 
-    def list_data(self, element : bs4.Tag):
-        tag = element.find('a')
+    def list_data(self, element : bs4.Tag) -> map:
+        ''' Function to get Data From each Element of a list '''
+        tag = element.find(AppConstants.Tags.a)
         return {
-            'text' : tag.string,
-            'blog' : tag.get('href')
+            AppConstants.TEXT : tag.string,
+            AppConstants.BLOG : tag.get(AppConstants.href)
         }
