@@ -17,7 +17,6 @@ class BlogListView(APIView):
     def get(self, request):
         ''' Get List Of Blogs in The Home Page Of the App '''
         try :
-            print(request == request.GET)
             scrapper = Scrapper()
             return scrapper.get_home_json()
         except Exception as e :

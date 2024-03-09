@@ -51,7 +51,7 @@ class Scrapper :
             })
         data.append({
             AppConstants.TAG : AppConstants.Tags.img,
-            AppConstants.CONTENT : article.find(AppConstants.Tags.div, class_='post-media').find(AppConstants.Tags.div).get(AppConstants.src),
+            AppConstants.CONTENT : article.find(AppConstants.Tags.div, class_='post-media').find(AppConstants.Tags.img).get(AppConstants.src),
         })
         
         content = article.find(AppConstants.Tags.div, class_ = 'show-content')
@@ -83,7 +83,7 @@ class Scrapper :
             AppConstants.CONTENT : []
         }
 
-        for article in self.soup.find(AppConstants.Tags.div, class_ = 'archive-wrap').find_all(AppConstants.Tags.div) :
+        for article in self.soup.find(AppConstants.Tags.div, class_ = 'archive-wrap').find_all(AppConstants.Tags.article) :
             data[AppConstants.CONTENT].append(self.get_details(article))
         
         return Response(data = data , status= status.HTTP_200_OK)
