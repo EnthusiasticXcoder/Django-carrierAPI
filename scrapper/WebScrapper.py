@@ -146,34 +146,31 @@ class WebScrapper :
             )
         return data
     
-    # def extract_div(self, contant : bs4.Tag) -> list[map]:
-    #     ''' Extract data from div '''
-    #     data = []
-    #     for i in list(contant.children) :
-    #         match i.name :
-    #             case AppConstants.Tags.div :
-    #                 data.extend(self.extract_div(i))
-    #             case AppConstants.Tags.ul :
-    #                 data.append(self.extract_list(i))
-    #             case AppConstants.Tags.ol :
-    #                 data.append(self.extract_list(i))
-    #             case AppConstants.Tags.figure :
-    #                 if i.find(AppConstants.Tags.table) :
-    #                     data.append(self.extract_table(i))
-    #             case AppConstants.Tags.a :
-    #                 if i.text.strip() != '' :
-    #                     data.append({
-    #                         AppConstants.TAG: i.name,
-    #                         AppConstants.CONTENT: i.text,
-    #                         AppConstants.LINK: i.get(AppConstants.href)
-    #                     })
-    #             case _ :
-    #                 if i.name in AppConstants.Tags.HEADERS_AND_PARAGRAPH and i.text.strip() != '':
-    #                     data.append({
-    #                         AppConstants.TAG: i.name,
-    #                         AppConstants.CONTENT: i.text
-    #                     })
-    #     return data
+    def extract_div(self, contant : bs4.Tag) -> list[map]:
+        ''' Extract data from div '''
+        data = []
+        for i in list(contant.children) :
+            name = i.name
+            if name == AppConstants.Tags.div :
+                data.extend(self.extract_div(i))
+            elif name == AppConstants.Tags.ul :
+                data.append(self.extract_list(i))
+            elif name == AppConstants.Tags.ol :
+                data.append(self.extract_list(i))
+            elif name == AppConstants.Tags.figure and i.find(AppConstants.Tags.table) :
+                data.append(self.extract_table(i))
+            elif name == AppConstants.Tags.a and i.text.strip() != '':
+                data.append({
+                    AppConstants.TAG: i.name,
+                    AppConstants.CONTENT: i.text,
+                    AppConstants.LINK: i.get(AppConstants.href)
+                })
+            elif name in AppConstants.Tags.HEADERS_AND_PARAGRAPH and i.text.strip() != '':
+                data.append({
+                    AppConstants.TAG: i.name,
+                    AppConstants.CONTENT: i.text
+                })
+        return data
     
     def list_to_json(self, element : bs4.Tag) -> map:
         ''' Function to convert HTML List to Json List '''
