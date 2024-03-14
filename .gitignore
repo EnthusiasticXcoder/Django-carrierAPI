@@ -161,3 +161,4 @@ cython_debug/
 #.idea/
 
 carrierpiolet/__pycache__/
+*.sqlite3
