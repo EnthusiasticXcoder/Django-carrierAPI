@@ -1,3 +1,3 @@
 
-from .scrapper import Scrapper
-from .AppConstants import AppConstants
+from Scrapper.scrapper import Scrapper
+from AppConstants import AppConstants
