@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import MenuListView, BlogContantView, BlogListView
-from Scrapper import AppConstants
+from Scrapper.AppConstants import AppConstants
 
 urlpatterns = [
     path(AppConstants.Path.MENU, MenuListView.as_view()),

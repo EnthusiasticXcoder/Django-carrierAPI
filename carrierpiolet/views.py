@@ -17,22 +17,43 @@ def Home(request):
             background-color: #f5f5f5;
             color: #333;
         }
-        
+
+        h2 {
+            text-align: center;
+            padding: 20px 0;
+            color: #007bff;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        
+
         th, td {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            border-bottom: 2px solid #ddd;
             text-align: left;
         }
-        
+
         th {
             background-color: #f2f2f2;
-            font-weight: normal;
+            font-weight: bold;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f2f2f2;
+        }
+
+        code {
+            background-color: #f9f9f9;
+            padding: 2px 6px;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -50,63 +71,63 @@ def Home(request):
         </thead>
         <tbody>
             <tr>
-                <td>/users/register</td>
+                <td><a href="/user/register">/user/register</a></td>
                 <td><code>POST</code></td>
                 <td>Register a new user.</td>
                 <td>first_name, last_name, email, username, password</td>
                 <td>No</td>
             </tr>
             <tr>
-                <td>/users/login</td>
+                <td><a href="/user/login">/user/login</a></td>
                 <td><code>POST</code></td>
                 <td>User login.</td>
                 <td>username, password</td>
                 <td>No</td>
             </tr>
             <tr>
-                <td>/users/</td>
+                <td><a href="/user/">/user/</a></td>
                 <td><code>GET</code></td>
                 <td>Retrieve the user with the help of Token.</td>
                 <td></td>
                 <td>Yes</td>
             </tr>
             <tr>
-                <td>/users/</td>
+                <td><a href="/user/">/user/</a></td>
                 <td><code>PUT</code></td>
                 <td>Update password of a user with the help of Token.</td>
                 <td>password</td>
                 <td>Yes</td>
             </tr>
             <tr>
-                <td>/users/</td>
+                <td><a href="/user/">/user/</a></td>
                 <td><code>DELETE</code></td>
                 <td>Delete a user with the help of Token.</td>
                 <td></td>
                 <td>Yes</td>
             </tr>
             <tr>
-                <td>/blog/menu/</td>
+                <td><a href="/blog/menu">/blog/menu</a></td>
                 <td><code>GET</code></td>
                 <td>Retrieve a list of available careers Data.</td>
                 <td></td>
                 <td>No</td>
             </tr>
             <tr>
-                <td>/blog/list/</td>
+                <td><a href="/blog/list">/blog/list</a></td>
                 <td><code>GET</code></td>
                 <td>Retrieve a list of all blogs of HomePage.</td>
                 <td></td>
                 <td>No</td>
             </tr>
             <tr>
-                <td>/blog/list/</td>
+                <td><a href="/blog/list">/blog/list</a></td>
                 <td><code>POST</code></td>
                 <td>Retrieve a list of all blogs of Particular career option.</td>
                 <td>url</td>
                 <td>No</td>
             </tr>
             <tr>
-                <td>/blog/content/</td>
+                <td><a href="/blog/content">/blog/content</a></td>
                 <td><code>POST</code></td>
                 <td>Retrieve content of a specific blog by URL.</td>
                 <td>url</td>
