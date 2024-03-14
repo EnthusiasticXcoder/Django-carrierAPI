@@ -5,7 +5,7 @@ from typing import Union
 from rest_framework import status
 from rest_framework.response import Response
 
-from scrapper.AppConstants import AppConstants 
+from temp.AppConstants import AppConstants 
 
 class WebScrapper :
     def __init__(self, URL : Union[str, None] = None):

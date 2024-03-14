@@ -18,11 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 from . import views
-from scrapper.AppConstants import AppConstants
+from temp.AppConstants import AppConstants
 
 urlpatterns = [
     path('admin', admin.site.urls),
     path('', views.Home),
-    # path(AppConstants.Path.USER, include('authenticate.urls')),
-    # path(AppConstants.Path.BLOG, include('blog.urls'))
+    path(AppConstants.Path.USER, include('authenticate.urls')),
+    path(AppConstants.Path.BLOG, include('blog.urls'))
 ]
