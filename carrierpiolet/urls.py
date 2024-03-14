@@ -16,12 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from scrapper.AppConstants import AppConstants
+# from scrapper.AppConstants import AppConstants
 import views
 
 urlpatterns = [
-    path(AppConstants.Path.ADMIN, admin.site.urls),
-    path(AppConstants.Path.BLANK, views.Home),
-    path(AppConstants.Path.USER, include('authenticate.urls')),
-    path(AppConstants.Path.BLOG, include('blog.urls'))
+    path('admin', admin.site.urls),
+    path('', views.Home),
+    # path(AppConstants.Path.USER, include('authenticate.urls')),
+    # path(AppConstants.Path.BLOG, include('blog.urls'))
 ]
