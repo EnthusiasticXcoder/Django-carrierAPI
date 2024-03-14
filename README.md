@@ -57,15 +57,15 @@ Django-carrierAPI is a RESTful API designed for user authentication and sending 
 
 | Endpoint                | Method  | Description                                               | Data                                            | Authorization Token |
 |-------------------------|---------|-----------------------------------------------------------|-------------------------------------------------|---------------------|
-| /users/register         | `POST`  | Register a new user.                                      |first_name, last_name, email, username, password | No                  |
-| /users/login            | `POST`  | User login.                                               |username, password                               | No                  |
-| /users/                 | `GET`   | Retrieve the user with the help of Token.                 |                                                 | Yes                 |
-| /users/                 | `PUT`   | Update password of a user with the help of Token.         |password                                         | Yes                 |
-| /users/                 | `DELETE`| Delete a user with the help of Token.                     |                                                 | Yes                 |
-| /blog/menu/             | `GET`   | Retrieve a list of available careers Data.                |                                                 | No                  |
-| /blog/list/             | `GET`   | Retrieve a list of all blogs of HomePage.                 |                                                 | No                  |
-| /blog/list/             | `POST`  | Retrieve a list of all blogs of Particular career option. |url                                              | No                  |
-| /blog/content/          | `POST`  | Retrieve content of a specific blog by URL.               |url                                              | No                  |
+| /user/register         | `POST`  | Register a new user.                                      |first_name, last_name, email, username, password | No                  |
+| /user/login            | `POST`  | User login.                                               |username, password                               | No                  |
+| /user/                 | `GET`   | Retrieve the user with the help of Token.                 |                                                 | Yes                 |
+| /user/                 | `PUT`   | Update password of a user with the help of Token.         |password                                         | Yes                 |
+| /user/                 | `DELETE`| Delete a user with the help of Token.                     |                                                 | Yes                 |
+| /blog/menu             | `GET`   | Retrieve a list of available careers Data.                |                                                 | No                  |
+| /blog/list             | `GET`   | Retrieve a list of all blogs of HomePage.                 |                                                 | No                  |
+| /blog/list             | `POST`  | Retrieve a list of all blogs of Particular career option. |url                                              | No                  |
+| /blog/content          | `POST`  | Retrieve content of a specific blog by URL.               |url                                              | No                  |
 
 
 ## Usage
