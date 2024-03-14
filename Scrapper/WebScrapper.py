@@ -5,9 +5,9 @@ from typing import Union
 from rest_framework import status
 from rest_framework.response import Response
 
-from Scrapper.AppConstants import AppConstants 
+from scrapper.AppConstants import AppConstants 
 
-class Scrapper :
+class WebScrapper :
     def __init__(self, URL : Union[str, None] = None):
         ''' Initialise Scrapper class for scrapping Data from Website '''
         URL = URL if URL is not None else AppConstants.BLOG_PATH_URL
@@ -149,7 +149,7 @@ class Scrapper :
     def extract_div(self, contant : bs4.Tag) -> list[map]:
         ''' Extract data from div '''
         data = []
-        for i in contant.children :
+        for i in list(contant.children) :
             match i.name :
                 case AppConstants.Tags.div :
                     data.extend(self.extract_div(i))
