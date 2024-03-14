@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from temp.WebScrapper import WebScrapper
-from temp.AppConstants import AppConstants
+from scrapper.WebScrapper import WebScrapper
+from scrapper.AppConstants import AppConstants
 
 class BlogListView(APIView):
     def post(self, request):

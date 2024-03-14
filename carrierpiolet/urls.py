@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from . import views
-from temp.AppConstants import AppConstants
+from scrapper.AppConstants import AppConstants
 
 urlpatterns = [
     path('admin', admin.site.urls),
