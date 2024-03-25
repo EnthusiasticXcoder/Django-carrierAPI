@@ -25,6 +25,13 @@ class BlogListView(APIView):
     
     
 class BlogContantView(APIView):
+    def get(request):
+        ''' No Get Method Allowed in This Rout'''
+        data = {
+            AppConstants.URL_FIELD : AppConstants.MESSAGES.BLOG_CONTANT_URL
+        }
+        return Response(data= data, status=status.HTTP_200_OK)
+    
     def post(self, request):
         ''' Get Content of the Blog For The Perticular URL '''
         try :

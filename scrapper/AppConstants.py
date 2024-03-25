@@ -1,7 +1,17 @@
 
 class AppConstants:
     ''' Constant variables used in this App '''
-     
+    class __Messages:
+        USER_NOT_FOUND = 'user not found'
+        BLOG_CONTANT_URL = 'Blog contant URL'
+        ENTER_FIRST_NAME = 'Enter First Name'
+        ENTER_LAST_NAME = 'Enter Last Name'
+        ENTER_EMAIL = 'Enter Email'
+        ENTER_USERNAME = 'Enter Your UserName'
+        ENTER_PASSWORD  = 'Enter Your Password'
+        USER_DATA_UPDATED = 'user data updated'
+        USER_DELETED = 'user deleted'
+
     class __Path:
         BLANK = ''
         ADMIN = 'admin/'
@@ -63,5 +73,15 @@ class AppConstants:
     LINK = 'link'
     ATTRIBUTE_LIST = 'attlist'
 
+    USERNAME = 'username'
+    PASSWORD = 'password'
+    FIRST_NAME = 'first_name'
+    LAST_NAME = 'last_name'
+    EMAIL = 'email'
+    TOKEN = 'token'
+    PAYLOAD = 'payload'
+    MESSAGE = 'message'
+
     Path = __Path
     Tags = __Tags
+    MESSAGES = __Messages
