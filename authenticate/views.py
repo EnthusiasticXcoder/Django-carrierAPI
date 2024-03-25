@@ -12,7 +12,7 @@ from scrapper.AppConstants import AppConstants
 from .serializers import UserSerialiser
 
 class LoginView(APIView) :
-    def get(request):
+    def get(self, request):
         ''' No Get Method Allowed in This Rout'''
         data = {
             AppConstants.USERNAME: AppConstants.MESSAGES.ENTER_USERNAME, 
@@ -42,7 +42,7 @@ class LoginView(APIView) :
             return response.Response(data= str(e), status=status.HTTP_400_BAD_REQUEST)    
 
 class RegesterView(APIView):
-    def get(request):
+    def get(self ,request):
         ''' No Get Method Allowed in This Rout'''
         data = {
             AppConstants.FIRST_NAME: AppConstants.MESSAGES.ENTER_FIRST_NAME,
