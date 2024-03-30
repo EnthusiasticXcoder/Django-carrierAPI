@@ -100,11 +100,10 @@ REST_FRAMEWORK = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('NAME'),
-        'USER': config('USER'),
-        'PASSWORD': config('PASSWORD'),
-        "HOST": config('HOST'),
-        "PORT": config('PORT'),
+        'NAME': config('POSTGRES_DATABASE'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        "HOST": config('POSTGRES_HOST'),
         "CONN_MAX_AGE": 5,
         "CONN_HEALTH_CHECKS": False,
     }
